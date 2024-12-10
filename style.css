@@ -1,5 +1,6 @@
 body {
     background-color: cadetblue;
+    overflow: hidden;
 }
 
 .racket {
@@ -7,14 +8,16 @@ body {
     height: 250px;
     aspect-ratio: 1/1.5;
     top: 45%;
+    z-index: 10;
 }
 
 #left-racket {
     left: 10%;
+    filter: grayscale(1);
 }
 
 #right-racket {
-    left: 75%;
+    right: 10%;
 }
 
 #ball {
@@ -25,7 +28,170 @@ body {
     box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
     position: absolute;
     top: 50%;
-    left: 42.5%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: 10;
+}
+
+#table {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    height: 45%;
+    width: 50%;
+    translate: -50%;
+}
+
+#countdown {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    background-color: grey;
+    min-width: 150px;
+    min-height: 150px;
+    text-align: center;
+    align-content: center;
+    font-size: 3rem;
+    color: white;
+    border-radius: 15%;
+    border: black 5px solid;
+    display: none;
+    z-index: 25;
+}
+
+@keyframes countdown-animation {
+    0% {
+        scale: 1;
+    }
+    100% {
+        scale: 1.25;
+    }
+}
+
+#start-game-button {
+    background-color: grey;
+    border: 5px solid black;
+    z-index: 25;
+    width: 250px;
+    height: 150px;
+    position: absolute;
+    cursor: pointer;
+    font-size: 3rem;
+    color: white;
+    border-radius: 4%;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    transition: all 0.3s;
+}
+#start-game-button:hover {
+    scale: 1.05;
+    font-size: 3.5rem;
+    filter: brightness(1.2);
+}
+
+#match-point {
+    background-color: grey;
+    color: white;
+    font-size: 3rem;
+    position: absolute;
+    border: 5px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+    left: 50%;
+    top: 70%;
+    translate: -50%;
+    z-index: 25;
+    display: none;
+}
+
+.control-info {
+    background-color: grey;
+    color: white;
+    font-size: 3rem;
+    position: absolute;
+    border: 5px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+    bottom: 2%;
+    z-index: 25;
+}
+
+#left-control-info {
+    left: 10%;
+}
+
+#right-control-info {
+    right: 10%;
+}
+
+#serve-info {
+    background-color: grey;
+    color: white;
+    font-size: 3rem;
+    position: absolute;
+    border: 5px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+    top: 50%;
+    z-index: 25;
+    display: none;
+    translate: 0% -50%;
+}
+
+.left-serve-pos {
+    left: 10%;
+}
+
+.right-serve-pos {
+    right: 10%;
+}
+
+#winner {
+    color: white;
+    position: absolute;
+    z-index: 25;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    display: none;
+    font-size: 3rem;
+    background-color: grey;
+    border: 5px solid black;
+    border-radius: 10px;
+}
+
+.blur {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+}
+
+.points {
+    font-size: 3rem;
+    position: absolute;
+    color: white;
+    background-color: grey;
+    border: 5px solid black;
+    z-index: 5;
+    min-width: 150px;
+    text-align: center;
+    left: 50%;
+    bottom: 2%;
+    z-index: 25;
+}
+
+#left-points {
+    translate: -125%;
+}
+
+#right-points {
+    translate: 25%;
 }
 
 #blue-fan {
