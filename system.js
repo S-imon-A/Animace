@@ -126,11 +126,11 @@ function mainLoop() {
     ball.style.left = (ballLeftPosition + ballSpeed * ballDirection[0]).toString() + "px"
     
     if (leftRect.right > ballLeftPosition && leftRect.top - 50 <= ballTopPosition && leftRect.bottom - 150 >= ballTopPosition) {
-        ballDirection = [1, random(-1, 1)]
+        ballDirection = [1, random(-0.4, 0.4)]
     }
 
     if (rightRect.left < ballLeftPosition + 50 && rightRect.top - 50 <= ballTopPosition && rightRect.bottom - 150 >= ballTopPosition) {
-        ballDirection = [-1, random(-1, 1)]
+        ballDirection = [-1, random(-0.4, 0.4)]
     }
 
     if (leftRect.left > ballLeftPosition) {
@@ -145,7 +145,7 @@ function mainLoop() {
     
 }
 
-ballDirection = [-1, random(-1, 1)]
+ballDirection = [-1, random(-0.4, 0.4)]
 
 document.addEventListener("keydown", onKeyDown)
 document.addEventListener("keyup", onKeyUp)
