@@ -27,3 +27,15 @@ body {
     top: 50%;
     left: 42.5%;
 }
+
+#blue-fan {
+    position: absolute;
+}
+
+#red-fan {
+    position: absolute;
+}
+
+#left-hand-blue {
+    position: absolute;
+}
