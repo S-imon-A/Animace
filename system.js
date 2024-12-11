@@ -68,6 +68,7 @@ const leftPoints = document.querySelector("#left-points")
 const rightPoints = document.querySelector("#right-points")
 const serveInfo = document.querySelector("#serve-info")
 const matchPointInfo = document.querySelector("#match-point")
+const countdown = document.querySelector("#countdown")
 let countdownBlur = NaN
 
 let leftPlayerPoints = 0
@@ -389,7 +390,6 @@ function countdownAnimationEnd() {
 }
 
 function startRound() {
-    const countdown = document.querySelector("#countdown")
     countdown.style.display = "block"
     countdown.style.animation = `countdown-animation ${cooldownNumberTime/2}s alternate 2`
 
