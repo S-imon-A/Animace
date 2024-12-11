@@ -1,3 +1,63 @@
+/*
+    Configuration
+*/
+// length in seconds of each number in countdown
+const cooldownNumberTime = 1
+
+
+// length in seconds of point add animation
+const pointAnimationTime = 0.5
+
+
+// top position for ball wall bounce
+const tableBorderTop = 375
+
+
+// bottom position for ball wall bounce
+const tableBorderBottom = 800   
+
+
+// racket's top position won't be able to move below this number
+const racketMaxTop = 350  
+
+
+// racket's top position won't be able to move over this number
+const racketMaxBottom = 650     
+
+
+/* how big a rotation on one side of the racket can be 
+    (example: hitting ball with top of the racket will result in this number in negative)
+    (example: hitting ball with bottom of the racket will result in this number)
+*/
+const racketHitBallRotationRange = 0.5   
+
+
+// by how much the ball speed will increase each racket hit
+const racketHitBallSpeedBoost = 0.5
+
+
+// by how much racket position will change every frame when moving
+const racketSpeed = 10
+
+
+// start position for the left serve of the ball (in %)
+const leftServeBallPosition = 20
+
+
+// start position for the right serve of the ball (in %)
+const rightServeBallPosition = 80
+
+
+// the speed that the ball will have at start of each round
+const ballStartSpeed = 15
+
+
+// slows the ball position to simulate table hits 
+const simulateBallTableHits = true
+
+
+/*
+*/
 const leftRacket = document.querySelector("#left-racket")
 const rightRacket = document.querySelector("#right-racket")
 const ball = document.querySelector("#ball")
@@ -13,86 +73,28 @@ let countdownBlur = NaN
 let leftPlayerPoints = 0
 let rightPlayerPoints = 0
 
-let racketSpeed = 10
+let playerStarts = 0
+let randomServe = 1
+let startSide = -1
+let isServe = false
+let serveHit = false
+
+let allowRacketMovement = false
 
 let leftRacketDirection = 0
-let rightRacketDirection = 0
-
 let leftUp = false
 let leftDown = false
 
+let rightRacketDirection = 0
 let rightUp = false
 let rightDown = false
 
 let ballDirection = [0, 0]
-let ballHitDirectionChange = 0.15
-let ballSpeed = 5
+let ballSpeed = ballStartSpeed
 let adjustedBallSpeed = ballSpeed
 let ballStop = true
 let handleBallStop = false
 let ballStopTimer = 0
-
-let playerStarts = 0
-let randomServe = 1
-let startSide = -1
-
-let allowRacketMovement = false
-
-function onKeyDown(event) {
-    let key = event.key
-    
-    if (key == "w") {
-        leftUp = true
-    }
-    else if (key == "s"){
-        leftDown = true
-    }
-    else if (key == "ArrowUp") {
-        rightUp = true
-    }
-    else if (key == "ArrowDown") {
-        rightDown = true
-    }
-}
-
-function onKeyUp(event) {
-    let key = event.key
-
-    if (key == "w") {
-        leftUp = false
-    }
-    else if (key == "s"){
-        leftDown = false
-    }
-    else if (key == "ArrowUp") {
-        rightUp = false
-    }
-    else if (key == "ArrowDown") {
-        rightDown = false
-    }
-}
-
-function checkInput() {
-    if (leftUp && !leftDown) {
-        leftRacketDirection = -1
-    }
-    else if (leftDown && !leftUp) {
-        leftRacketDirection = 1
-    }
-    else {
-        leftRacketDirection = 0
-    }
-
-    if (rightUp && !rightDown) {
-        rightRacketDirection = -1
-    }
-    else if (rightDown && !rightUp) {
-        rightRacketDirection = 1
-    }
-    else {
-        rightRacketDirection = 0
-    }
-}
 
 function random(rangeMin, rangeMax) {
     rangeMax *= 100
@@ -113,185 +115,283 @@ function getDistance(element0, element1) {
     return Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2))
 }
 
-function calculateBallSpeed() {
-    const ballToLeftRacket = getDistance(ball, leftRacket)
-    const ballToRightRacket = getDistance(ball, rightRacket)
+function getNumberFromPixelString(pixelString) {
+    return parseFloat(pixelString.slice(0, pixelString.length - 2))
+}
 
-    if (ballToLeftRacket < ballToRightRacket) {
-        if (ballDirection[0] == -1) {
-            if (ballToLeftRacket > 400 && ballToLeftRacket < 450 && ballStop) {
-                ballStop = false
-                handleBallStop = true
-            }
-        }
-        else {
-            ballStop = true
-        }
-    }
-    else {
-        if (ballDirection[0] == 1) {
-            if (ballToRightRacket > 400 && ballToRightRacket < 450 && ballStop) {
-                ballStop = false
-                handleBallStop = true
-            }
-        }
-        else {
-            ballStop = true
-        }
-    }
-
-    if (handleBallStop) {
-        ballStopTimer ++
-
-        if (ballStopTimer >= 50) {
-            handleBallStop = false
-        }
-
-        adjustedBallSpeed = ballSpeed - (ballStopTimer / 10)
-    }
-    else {
-        ballStopTimer = 0
-
-        if (adjustedBallSpeed < ballSpeed) {
-            adjustedBallSpeed = adjustedBallSpeed + 1
-        }
+function handleKey(key, isKeyDown) {
+    switch (key) {
+        case "w":
+            leftUp = isKeyDown
+            break
+        case "W":
+            leftUp = isKeyDown
+            break
+        case "s":
+            leftDown = isKeyDown
+            break
+        case "S":
+            leftDown = isKeyDown
+        case "ArrowUp":
+            rightUp = isKeyDown
+            break
+        case "ArrowDown":
+            rightDown = isKeyDown
+            break
+        default:
+            break
     }
 }
 
-function handleBallVelocity() {
-    const ballStyle = window.getComputedStyle(ball)
-    let ballTopPosition = parseFloat(ballStyle.top.slice(0, ballStyle.top.length - 2))
-    let ballLeftPosition = parseFloat(ballStyle.left.slice(0, ballStyle.left.length - 2))
+function onKeyDown(event) {
+    const key = event.key
     
-    ball.style.top = (ballTopPosition + adjustedBallSpeed * ballDirection[1]).toString() + "px"
-    ball.style.left = (ballLeftPosition + adjustedBallSpeed * ballDirection[0]).toString() + "px"
+    handleKey(key, true)
+}
 
-    if (ballTopPosition < 350 && ballDirection[1] < 0) {
-        ballDirection = [ballDirection[0], Math.abs(ballDirection[1])]
+function onKeyUp(event) {
+    const key = event.key
+
+    handleKey(key, false)
+}
+
+function getDirectionFromInput(upInput, downInput) {
+    if (upInput && !downInput) {
+        return -1
     }
-
-    if (ballTopPosition > 725 && ballDirection[1] > 0) {
-        ballDirection = [ballDirection[0], -Math.abs(ballDirection[1])]
+    else if (downInput && !upInput) {
+        return 1
+    }
+    else {
+        return 0
     }
 }
 
-function handleRacketPositions() {
+function handleInput() {
+    leftRacketDirection = getDirectionFromInput(leftUp, leftDown)
+    rightRacketDirection = getDirectionFromInput(rightUp, rightDown)
+}
+
+function calculateBallSpeed() {
+    if (!simulateBallTableHits) {
+        return
+    }
+
+    const racketDistance = getDistance(leftRacket, rightRacket)
+
+    const ballStyle = window.getComputedStyle(ball)
+    const ballRect = ball.getBoundingClientRect()
+    const ballMiddlePosition = getNumberFromPixelString(ballStyle.left) + ballRect.width / 2
+
+    const leftRacketStyle = window.getComputedStyle(leftRacket)
+    const leftRect = leftRacket.getBoundingClientRect()
+    const leftRacketMiddlePosition = getNumberFromPixelString(leftRacketStyle.left) + leftRect.width / 2
+
+    const rightRacketStyle = window.getComputedStyle(rightRacket)
+    const rightRect = rightRacket.getBoundingClientRect()
+    const rightRacketMiddlePosition = getNumberFromPixelString(rightRacketStyle.left) + rightRect.width / 2
+
+    const middlePointPosition = leftRacketMiddlePosition + racketDistance / 2
+
+    const ballToLeft = Math.abs(ballMiddlePosition - leftRacketMiddlePosition)
+    const ballToRight = Math.abs(ballMiddlePosition - rightRacketMiddlePosition)
+    const ballToMiddle = Math.abs(ballMiddlePosition - middlePointPosition)
+
+    const distanceRange = racketDistance / 8
+
+    if (ballToLeft < ballToRight && ballToLeft < ballToMiddle) {
+        if (ballDirection[0] < 0 && ballToLeft < distanceRange || isServe) {
+            adjustedBallSpeed = ballSpeed - (ballSpeed / (racketDistance/4)) * ballToLeft
+        }
+        else {
+            adjustedBallSpeed = ballSpeed
+        }
+    }
+    else if (ballToRight < ballToLeft && ballToRight < ballToMiddle) {
+        if (ballDirection[0] > 0 && ballToRight < distanceRange || isServe) {
+            adjustedBallSpeed = ballSpeed - (ballSpeed / (racketDistance/4)) * ballToRight
+        }
+        else {
+            adjustedBallSpeed = ballSpeed
+        }
+    }
+    else {
+        if (ballDirection[0] < 0 && ballToLeft < ballToRight && ballToMiddle < distanceRange || ballDirection[0] > 0 && ballToRight < ballToLeft && ballToMiddle < distanceRange || isServe) {
+            adjustedBallSpeed = ballSpeed - (ballSpeed / (racketDistance/4)) * ballToMiddle
+        }
+        else {
+            adjustedBallSpeed = ballSpeed
+        }
+    }
+
+    if (adjustedBallSpeed < ballSpeed / 2) {
+        adjustedBallSpeed = ballSpeed / 2
+    } 
+}
+
+function handleBallVelocity(deltaTime) {
+    const ballStyle = window.getComputedStyle(ball)
+    const ballRect = ball.getBoundingClientRect()
+    let ballTopPosition = getNumberFromPixelString(ballStyle.top)
+    let ballLeftPosition = getNumberFromPixelString(ballStyle.left)
+    
+    ball.style.top = `${ballTopPosition + adjustedBallSpeed * ballDirection[1] * deltaTime}px`
+    ball.style.left = `${ballLeftPosition + adjustedBallSpeed * ballDirection[0] * deltaTime}px`
+
+    if (ballTopPosition <= tableBorderTop && ballDirection[1] < 0) {
+        ballDirection[1] = Math.abs(ballDirection[1])
+    }
+
+    if (ballTopPosition + ballRect.height >= tableBorderBottom && ballDirection[1] > 0) {
+        ballDirection[1] = -Math.abs(ballDirection[1])
+    }
+}
+
+function handleRacketPositions(deltaTime) {
     const leftRacketStyle = window.getComputedStyle(leftRacket)
     const rightRacketStyle = window.getComputedStyle(rightRacket)
 
-    let leftRacketTopPosition = parseFloat(leftRacketStyle.top.slice(0, leftRacketStyle.top.length - 2))
-    let leftMove = racketSpeed * leftRacketDirection
+    let leftRacketTopPosition = getNumberFromPixelString(leftRacketStyle.top)
+    let leftMove = racketSpeed * leftRacketDirection * deltaTime
 
-    if (leftRacketTopPosition + leftMove < 350) {
-        leftRacketTopPosition = 350
+    if (leftRacketTopPosition + leftMove < racketMaxTop) {
+        leftRacketTopPosition = racketMaxTop
         leftMove = 0
     }
-    else if (leftRacketTopPosition + leftMove > 650) {
-        leftRacketTopPosition = 650
+    else if (leftRacketTopPosition + leftMove > racketMaxBottom) {
+        leftRacketTopPosition = racketMaxBottom
         leftMove = 0
     }
 
-    let rightRacketTopPosition = parseFloat(rightRacketStyle.top.slice(0, rightRacketStyle.top.length - 2))
-    let rightMove = racketSpeed * rightRacketDirection
+    let rightRacketTopPosition = getNumberFromPixelString(rightRacketStyle.top)
+    let rightMove = racketSpeed * rightRacketDirection * deltaTime
 
-    if (rightRacketTopPosition + rightMove < 350) {
-        rightRacketTopPosition = 350
+    if (rightRacketTopPosition + rightMove < racketMaxTop) {
+        rightRacketTopPosition = racketMaxTop
         rightMove = 0
     }
-    else if (rightRacketTopPosition + rightMove > 650) {
-        rightRacketTopPosition = 650
+    else if (rightRacketTopPosition + rightMove > racketMaxBottom) {
+        rightRacketTopPosition = racketMaxBottom
         rightMove = 0
     }
 
     if (allowRacketMovement) {
-        leftRacket.style.top = (leftRacketTopPosition + leftMove).toString() + "px"
-        rightRacket.style.top = (rightRacketTopPosition + rightMove).toString() + "px"
+        leftRacket.style.top = `${leftRacketTopPosition + leftMove}px`
+        rightRacket.style.top = `${rightRacketTopPosition + rightMove}px`
     }
+}
+
+function getBallHitRotation(distanceToTop) {
+    return -racketHitBallRotationRange + (distanceToTop / (150 / (racketHitBallRotationRange * 2)))
 }
 
 function handleBallHits() {
     const ballStyle = window.getComputedStyle(ball)
-    let ballTopPosition = parseFloat(ballStyle.top.slice(0, ballStyle.top.length - 2))
-    let ballLeftPosition = parseFloat(ballStyle.left.slice(0, ballStyle.left.length - 2))
-    let leftRect = leftRacket.getBoundingClientRect()
-    let rightRect = rightRacket.getBoundingClientRect()
+    const ballRect = ball.getBoundingClientRect()
+    let ballTopPosition = getNumberFromPixelString(ballStyle.top)
+    let ballLeftPosition = getNumberFromPixelString(ballStyle.left)
 
-    if (leftRect.right > ballLeftPosition && leftRect.top - 50 <= ballTopPosition && leftRect.bottom - 100 >= ballTopPosition) {
-        let distanceToTop = Math.abs(leftRect.top - ballTopPosition)
+    const leftRacketStyle = window.getComputedStyle(leftRacket)
+    const leftRect = leftRacket.getBoundingClientRect()
+    let leftRacketTopPosition = getNumberFromPixelString(leftRacketStyle.top)
+    let leftRacketBottomPosition = leftRacketTopPosition + leftRect.height
+    let leftRacketLeftPosition = getNumberFromPixelString(leftRacketStyle.left)
+    let leftRacketRightPosition = leftRacketLeftPosition + leftRect.width
+    
+    const rightRacketStyle = window.getComputedStyle(rightRacket)
+    const rightRect = rightRacket.getBoundingClientRect()
+    let rightRacketTopPosition = getNumberFromPixelString(rightRacketStyle.top)
+    let rightRacketBottomPosition = rightRacketTopPosition + rightRect.height
+    let rightRacketLeftPosition = getNumberFromPixelString(rightRacketStyle.left)
+    let rightRacketRightPosition = rightRacketLeftPosition + rightRect.width
 
-        let rotation = -0.5 + (distanceToTop / 150)
+    if (leftRacketRightPosition >= ballLeftPosition && leftRacketTopPosition - ballRect.height <= ballTopPosition && leftRacketBottomPosition - 90 >= ballTopPosition) {
+        let distanceToTop = Math.abs(leftRacketTopPosition - ballTopPosition)
+        let rotation = getBallHitRotation(distanceToTop)
 
         ballDirection = [1, rotation]
-        ballSpeed += 0.25
+        ballSpeed += racketHitBallSpeedBoost
 
-        ballSpeed = random(ballSpeed - 0.25, ballSpeed + 1)
+        if (!serveHit) {
+            isServe = false
+        }
+        else {
+            serveHit = false
+        }
     }
 
-    if (rightRect.left < ballLeftPosition + 50 && rightRect.top - 50 <= ballTopPosition && rightRect.bottom - 100 >= ballTopPosition) {
-        let distanceToTop = Math.abs(rightRect.top - ballTopPosition)
-
-        let rotation = -0.5 + (distanceToTop / 150)
+    if (rightRacketLeftPosition <= ballLeftPosition && rightRacketTopPosition - ballRect.height <= ballTopPosition && rightRacketBottomPosition - 90 >= ballTopPosition) {
+        let distanceToTop = Math.abs(rightRacketTopPosition - ballTopPosition)
+        let rotation = getBallHitRotation(distanceToTop)
 
         ballDirection = [-1, rotation]
-        ballSpeed += 0.25
-
-        ballSpeed = random(ballSpeed - 0.25, ballSpeed + 1)
+        ballSpeed += racketHitBallSpeedBoost
+        
+        if (!serveHit) {
+            isServe = false
+        }
+        else {
+            serveHit = false
+        }
     }
 
-    if (leftRect.left > ballLeftPosition && allowRacketMovement) {
+    if (leftRacketLeftPosition > ballLeftPosition && allowRacketMovement) {
         ballDirection = [0, 0]
         allowRacketMovement = false
         rightPlayerPoints++
-        rightPoints.style.animation = "countdown-animation 0.5s alternate 2"
+        rightPoints.style.animation = `countdown-animation ${pointAnimationTime}s alternate 2`
         endRound("Right player")
     }
 
-    if (rightRect.right < ballLeftPosition + 50 && allowRacketMovement) {
+    if (rightRacketRightPosition < ballLeftPosition + ballRect.width && allowRacketMovement) {
         ballDirection = [0, 0]
         allowRacketMovement = false
         leftPlayerPoints++
-        leftPoints.style.animation = "countdown-animation 0.5s alternate 2"
+        leftPoints.style.animation = `countdown-animation ${pointAnimationTime}s alternate 2`
         endRound("Left player")
     }
 }
 
 function countdownAnimationEnd() {
-    if (countdown.innerText === "3") {
-        countdown.innerText = "2"
-        countdown.style.animation = "none"
-        setTimeout(() => {
-            countdown.style.animation = "countdown-animation 0.5s alternate 2"
-        }, 10)
-    }
-    else if (countdown.innerText === "2") {
-        countdown.innerText = "1"
-        countdown.style.animation = "none"
-        setTimeout(() => {
-            countdown.style.animation = "countdown-animation 0.5s alternate 2"
-        }, 10)
-    }
-    else if (countdown.innerText === "1") {
-        countdown.innerText = "Go!"
-        countdown.style.animation = "none"
-        setTimeout(() => {
-            countdown.style.animation = "countdown-animation 0.5s alternate 2"
-        }, 10)
-    }
-    else {
-        countdown.innerText = "3"
-        countdown.style.animation = "none"
-        countdown.style.display = "none"
-        countdownBlur.remove()
-        countdown.removeEventListener("click", countdownAnimationEnd)
+    switch (countdown.innerText) {
+        case "3":
+            countdown.innerText = "2"
+            countdown.style.animation = "none"
+            setTimeout(() => {
+                countdown.style.animation = `countdown-animation ${cooldownNumberTime/2}s alternate 2`
+            }, 10)
+            break
+        case "2":
+            countdown.innerText = "1"
+            countdown.style.animation = "none"
+            setTimeout(() => {
+                countdown.style.animation = `countdown-animation ${cooldownNumberTime/2}s alternate 2`
+            }, 10)
+            break
+        case "1":
+            countdown.innerText = "Go!"
+            countdown.style.animation = "none"
+            setTimeout(() => {
+                countdown.style.animation = `countdown-animation ${cooldownNumberTime/2}s alternate 2`
+            }, 10)
+            break
+        default:
+            countdown.innerText = "3"
+            countdown.style.animation = "none"
+            countdown.style.display = "none"
+            countdownBlur.remove()
+            countdown.removeEventListener("click", countdownAnimationEnd)
+    
+            enableBall()
 
-        enableBall()
+            break
     }
 }
 
 function startRound() {
     const countdown = document.querySelector("#countdown")
     countdown.style.display = "block"
-    countdown.style.animation = "countdown-animation 0.5s alternate 2"
+    countdown.style.animation = `countdown-animation ${cooldownNumberTime/2}s alternate 2`
 
     countdownBlur = document.createElement("div")
     countdownBlur.classList.add("blur")
@@ -380,19 +480,19 @@ function setNextServePlayer() {
 
 function enableBall() {
     if (startSide === -1) {
-        ball.style.left = "20%"
+        ball.style.left = `${leftServeBallPosition}%`
     }
     else {
-        ball.style.left = "80%"
+        ball.style.left = `${rightServeBallPosition}%`
     }
     
     ball.style.top = "50%"
 
-    ballSpeed = 10
+    isServe = true
+    serveHit = true
+    ballSpeed = ballStartSpeed
     adjustedBallSpeed = ballSpeed
-    ballHitDirectionChange = 0.15
-
-    ballDirection = [startSide, random(-ballHitDirectionChange, ballHitDirectionChange)]
+    ballDirection = [startSide, 0]
 
     ball.style.visibility = "visible"
     allowRacketMovement = true
@@ -425,12 +525,18 @@ function displayPoints() {
     rightPoints.innerText = rightPlayerPoints
 }
 
-function mainLoop() {
-    checkInput()
-    handleRacketPositions()
-    handleBallVelocity()
+let lastTime = 0
+function mainLoop(time) {
+    const deltaTime = (time - lastTime) / 10
+    lastTime = time
+
+    handleInput()
+    handleRacketPositions(deltaTime)
+    handleBallVelocity(deltaTime)
     handleBallHits()
     calculateBallSpeed()
+
+    window.requestAnimationFrame(mainLoop)
 }
 
 function setup() {
@@ -458,7 +564,8 @@ function setup() {
 
     document.addEventListener("keydown", onKeyDown)
     document.addEventListener("keyup", onKeyUp)
-    setInterval(mainLoop, 10)
+    
+    window.requestAnimationFrame(mainLoop)
 }
 
 setup()
