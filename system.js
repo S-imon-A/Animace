@@ -198,7 +198,7 @@ function calculateBallSpeed() {
     const ballToRight = Math.abs(ballMiddlePosition - rightRacketMiddlePosition)
     const ballToMiddle = Math.abs(ballMiddlePosition - middlePointPosition)
 
-    const distanceRange = racketDistance / 8
+    const distanceRange = racketDistance / 2
 
     if (ballToLeft < ballToRight && ballToLeft < ballToMiddle) {
         if (ballDirection[0] < 0 && ballToLeft < distanceRange || isServe) {
@@ -227,7 +227,11 @@ function calculateBallSpeed() {
 
     if (adjustedBallSpeed < ballSpeed / 2) {
         adjustedBallSpeed = ballSpeed / 2
-    } 
+    }
+
+    let ballScale = (1 / ballSpeed) * adjustedBallSpeed
+
+    ball.style.scale = `${ballScale}`
 }
 
 function handleBallVelocity(deltaTime) {
