@@ -70,6 +70,7 @@ const serveInfo = document.querySelector("#serve-info")
 const matchPointInfo = document.querySelector("#match-point")
 const countdown = document.querySelector("#countdown")
 let countdownBlur = NaN
+let startDefaultText = startButton.innerText
 
 let leftPlayerPoints = 0
 let rightPlayerPoints = 0
@@ -96,15 +97,6 @@ let adjustedBallSpeed = ballSpeed
 let ballStop = true
 let handleBallStop = false
 let ballStopTimer = 0
-
-function random(rangeMin, rangeMax) {
-    rangeMax *= 100
-    rangeMin *= 100
-
-    let randomNumber = Math.floor(Math.random() * Math.abs(rangeMax - rangeMin) + 1)
-
-    return rangeMin / 100 + randomNumber / 100
-}
 
 function getDistance(element0, element1) {
     const rect0 = element0.getBoundingClientRect()
@@ -173,7 +165,7 @@ function handleInput() {
     rightRacketDirection = getDirectionFromInput(rightUp, rightDown)
 }
 
-function calculateBallSpeed() {
+function simulateTableHits() {
     if (!simulateBallTableHits) {
         return
     }
@@ -442,7 +434,10 @@ function endRound(winnerName) {
         }
 
         serveInfo.style.display = "block"
-        startRound()
+
+        startButton.innerText = "Next serve"
+        startButton.style.display = "block"
+        startButtonBackground.style.display = "block"
     }, 2000)
 }
 
@@ -538,7 +533,7 @@ function mainLoop(time) {
     handleRacketPositions(deltaTime)
     handleBallVelocity(deltaTime)
     handleBallHits()
-    calculateBallSpeed()
+    simulateTableHits()
 
     window.requestAnimationFrame(mainLoop)
 }
@@ -561,7 +556,9 @@ function setup() {
 
         serveInfo.style.display = "block"
 
-        setNextServePlayer()
+        if (startButton.innerText === startDefaultText) {
+            setNextServePlayer()
+        }
 
         startRound()
     })
