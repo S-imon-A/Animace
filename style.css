@@ -1,6 +1,17 @@
+* {
+    cursor: default;
+    user-select: none;
+}
+
+:root {
+    --font:Fugaz One;
+}
+
 body {
     background-color: cadetblue;
     overflow: hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .racket {
@@ -58,6 +69,7 @@ body {
     border: black 5px solid;
     display: none;
     z-index: 25;
+    font-family: var(--font);
 }
 
 @keyframes countdown-animation {
@@ -70,7 +82,7 @@ body {
 }
 
 #start-game-button {
-    background-color: grey;
+    background-color: rgb(145, 13, 13);
     border: 5px solid black;
     z-index: 25;
     width: 250px;
@@ -78,16 +90,17 @@ body {
     position: absolute;
     cursor: pointer;
     font-size: 3rem;
-    color: white;
+    color: black;
     border-radius: 4%;
     left: 50%;
     top: 50%;
     translate: -50% -50%;
     transition: all 0.3s;
+    font-family: var(--font);
 }
 #start-game-button:hover {
     scale: 1.05;
-    font-size: 3.5rem;
+    font-size: 3rem;
     filter: brightness(1.2);
 }
 
@@ -104,6 +117,7 @@ body {
     translate: -50%;
     z-index: 25;
     display: none;
+    font-family: var(--font);
 }
 
 .control-info {
@@ -116,6 +130,7 @@ body {
     padding-right: 5px;
     bottom: 2%;
     z-index: 25;
+    font-family: var(--font);
 }
 
 #left-control-info {
@@ -138,6 +153,7 @@ body {
     z-index: 25;
     display: none;
     translate: 0% -50%;
+    font-family: var(--font);
 }
 
 .left-serve-pos {
@@ -160,6 +176,7 @@ body {
     background-color: grey;
     border: 5px solid black;
     border-radius: 10px;
+    font-family: var(--font);
 }
 
 .blur {
@@ -184,6 +201,7 @@ body {
     left: 50%;
     bottom: 2%;
     z-index: 25;
+    font-family: var(--font);
 }
 
 #left-points {
@@ -194,14 +212,97 @@ body {
     translate: 25%;
 }
 
-#blue-fan {
+.blue-fan {
     position: absolute;
+    left: 500px;
+    z-index: 5;
+    animation: jooo-middle 0.25s alternate infinite ease-in-out;
 }
 
-#red-fan {
+.red-fan {
     position: absolute;
+    left: 1300px;
+    z-index: 5;
+    animation: jooo-middle 0.25s alternate infinite ease-in-out;
 }
 
-#left-hand-blue {
+.left-hand-blue {
     position: absolute;
+    left: 476px;
+    width: 130px;
+    height: 130px;
+    top: 100px;
+    animation: jooo-left 0.3s alternate infinite;
+}
+
+.right-hand-blue {
+    position: absolute;
+    left: 550px;
+    width: 130px;
+    height: 130px;
+    top: 100px;
+    animation: jooo-right 0.3s alternate infinite;
+}
+
+.left-hand-red {
+    position: absolute;
+    left: 1276px;
+    width: 130px;
+    height: 130px;
+    top: 100px;
+    animation: jooo-left 0.3s alternate infinite;
+}
+
+.right-hand-red {
+    position: absolute;
+    left: 1350px;
+    width: 130px;
+    height: 130px;
+    top: 100px;
+    animation: jooo-right 0.3s alternate infinite;
+}
+
+@keyframes jooo-left {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: 100deg;
+    }
+}
+
+@keyframes jooo-right {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: -100deg;
+    }
+}
+
+@keyframes jooo-middle {
+    0% {
+        rotate: 5deg;
+    }
+    100% {
+        rotate: -5deg;
+    }
+}
+
+.lavicka-left {
+    position: absolute;
+    left: 15%;
+    height: 200px;
+    width: 600px;
+    top: 150px;
+    z-index: -1;
+}
+
+.lavicka-right {
+    position: absolute;
+    right: 15%;
+    height: 200px;
+    width: 600px;
+    top: 150px;
+    z-index: -1;
 }
