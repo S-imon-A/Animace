@@ -56,6 +56,20 @@ const ballStartSpeed = 15
 const simulateBallTableHits = true
 
 
+// fan animation names and durations
+const fanBodyAnimationName = "jooo-middle"
+const fanBodyAnimationLength = 0.25
+
+const fanLeftHandAnimationName = "jooo-left"
+const fanLeftHandAnimationLength = 0.3
+const fanLeftHandConstantAnimationName = "jooo-left-constant"
+const fanLeftHandConstantAnimationLength = 0.1
+
+const fanRightHandAnimationName = "jooo-right"
+const fanRightHandAnimationLength = 0.3
+const fanRightHandConstantAnimationName = "jooo-right-constant"
+const fanRightHandConstantAnimationLength = 0.1
+
 /*
 */
 const leftRacket = document.querySelector("#left-racket")
@@ -97,6 +111,10 @@ let adjustedBallSpeed = ballSpeed
 let ballStop = true
 let handleBallStop = false
 let ballStopTimer = 0
+
+let blueFans = []
+let redFans = []
+let lastFanSide = "none"
 
 function getDistance(element0, element1) {
     const rect0 = element0.getBoundingClientRect()
@@ -418,6 +436,13 @@ function endRound(winnerName) {
         winner.innerText = winnerName
     }
 
+    if (winnerName === "Left player") {
+        activateFans("left", true)
+    }
+    else if (winnerName === "Right player") {
+        activateFans("right", true)
+    }
+
     displayPoints()
 
     setTimeout(() => {
@@ -524,6 +549,103 @@ function displayPoints() {
     rightPoints.innerText = rightPlayerPoints
 }
 
+function activateFans(side, state) {
+    if (side === "left") {
+        blueFans.forEach(blueFan => {
+            const classList = blueFan.classList
+
+            if (classList.contains("blue-fan")) {
+                if (state) {
+                    blueFan.style.animation = `${fanBodyAnimationName} ${fanBodyAnimationLength}s infinite alternate ease-in-out`
+                }
+                else {
+                    blueFan.style.animation = "none"
+                }
+            } 
+            else if (classList.contains("left-hand-blue")) {
+                if (state) {
+                    blueFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 alternate ease-in-out`
+
+                    blueFan.addEventListener("animationend", () => {
+                        blueFan.style.animation = `${fanLeftHandConstantAnimationName} ${fanLeftHandConstantAnimationLength}s infinite alternate ease-in-out`
+                    })
+                }
+                else {
+                    blueFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 ease-in-out reverse`
+
+                    blueFan.addEventListener("animationend", () => {
+                        blueFan.style.animation = "none"
+                    })
+                }
+            }
+            else if (classList.contains("right-hand-blue")) {
+                if (state) {
+                    blueFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 alternate ease-in-out`
+
+                    blueFan.addEventListener("animationend", () => {
+                        blueFan.style.animation = `${fanRightHandConstantAnimationName} ${fanRightHandConstantAnimationLength}s infinite alternate ease-in-out`
+                    })
+                }
+                else {
+                    blueFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 ease-in-out reverse`
+
+                    blueFan.addEventListener("animationend", () => {
+                        blueFan.style.animation = "none"
+                    })
+                }
+            } 
+        })
+    }
+    else if (side === "right") {
+        redFans.forEach(redFan => {
+            const classList = redFan.classList
+
+            if (classList.contains("red-fan")) {
+                if (state) {
+                    redFan.style.animation = `${fanBodyAnimationName} ${fanBodyAnimationLength}s infinite alternate ease-in-out`
+                }
+                else {
+                    redFan.style.animation = "none"
+                }
+            } 
+            else if (classList.contains("left-hand-red")) {
+                if (state) {
+                    redFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 alternate ease-in-out`
+
+                    redFan.addEventListener("animationend", () => {
+                        redFan.style.animation = `${fanLeftHandConstantAnimationName} ${fanLeftHandConstantAnimationLength}s infinite alternate ease-in-out`
+                    })
+                }
+                else {
+                    redFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 ease-in-out reverse`
+
+                    redFan.addEventListener("animationend", () => {
+                        redFan.style.animation = "none"
+                    })
+                }
+            }
+            else if (classList.contains("right-hand-red")) {
+                if (state) {
+                    redFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 alternate ease-in-out`
+
+                    redFan.addEventListener("animationend", () => {
+                        redFan.style.animation = `${fanRightHandConstantAnimationName} ${fanRightHandConstantAnimationLength}s infinite alternate ease-in-out`
+                    })
+                }
+                else {
+                    redFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 ease-in-out reverse`
+
+                    redFan.addEventListener("animationend", () => {
+                        redFan.style.animation = "none"
+                    })
+                }
+            } 
+        })
+    }
+
+    lastFanSide = side
+}
+
 let lastTime = 0
 function mainLoop(time) {
     const deltaTime = (time - lastTime) / 10
@@ -536,6 +658,67 @@ function mainLoop(time) {
     simulateTableHits()
 
     window.requestAnimationFrame(mainLoop)
+}
+
+function duplicateFans(middleFan, side) {
+    const body = document.body
+
+    const leftFan = middleFan.cloneNode(true)
+    leftFan.removeAttribute("id")
+    body.append(leftFan)
+
+    for (let i = 0; i < leftFan.children.length; i++) {
+        const childElement = leftFan.children[i]
+
+        if (side === "left") {
+            childElement.style.left = "15%"
+            blueFans.push(childElement)
+        }
+        else if (side === "right") {
+            childElement.style.right = "15%"
+            redFans.push(childElement)
+        }
+
+        childElement.style.scale = "1.05"
+    }
+
+    const rightFan = middleFan.cloneNode(true)
+    rightFan.removeAttribute("id")
+    body.append(rightFan)
+
+    for (let i = 0; i < rightFan.children.length; i++) {
+        const childElement = rightFan.children[i]
+
+        if (side === "left") {
+            childElement.style.left = "37.4%"
+            blueFans.push(childElement)
+        }
+        else if (side === "right") {
+            childElement.style.right = "37.4%"
+            redFans.push(childElement)
+        }
+
+        childElement.style.scale = "1.05"
+    }
+
+    for (let i = 0; i < middleFan.children.length; i++) {
+        const childElement = middleFan.children[i]
+
+        if (side === "left") {
+            blueFans.push(childElement)
+        }
+        else if (side === "right") {
+            redFans.push(childElement)
+        }
+    }
+}
+
+function createFans() {
+    const blueFan = document.querySelector("#blue-fans")
+    const redFan = document.querySelector("#red-fans")
+
+    duplicateFans(blueFan, "left")
+    duplicateFans(redFan, "right")
 }
 
 function setup() {
@@ -560,8 +743,14 @@ function setup() {
             setNextServePlayer()
         }
 
+        if (lastFanSide !== "none") {
+            activateFans(lastFanSide, false)
+        }
+
         startRound()
     })
+
+    createFans()
 
     document.addEventListener("keydown", onKeyDown)
     document.addEventListener("keyup", onKeyUp)

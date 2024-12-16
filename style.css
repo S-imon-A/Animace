@@ -4,7 +4,7 @@
 }
 
 :root {
-    --font:Fugaz One;
+    --font: Fugaz One;
 }
 
 body {
@@ -12,6 +12,8 @@ body {
     overflow: hidden;
     background-size: cover;
     background-repeat: no-repeat;
+    background-position: center center;
+    height: 100vh;
 }
 
 .racket {
@@ -214,52 +216,50 @@ body {
 
 .blue-fan {
     position: absolute;
-    left: 500px;
+    left: 26.2%;
     z-index: 5;
-    animation: jooo-middle 0.25s alternate infinite ease-in-out;
 }
 
 .red-fan {
     position: absolute;
-    left: 1300px;
+    right: 26.2%;
     z-index: 5;
-    animation: jooo-middle 0.25s alternate infinite ease-in-out;
 }
 
 .left-hand-blue {
     position: absolute;
-    left: 476px;
+    translate: -24px;
+    left: 26.2%;
     width: 130px;
     height: 130px;
     top: 100px;
-    animation: jooo-left 0.3s alternate infinite;
 }
 
 .right-hand-blue {
     position: absolute;
-    left: 550px;
+    left: 26.2%;
+    translate: 50px;
     width: 130px;
     height: 130px;
     top: 100px;
-    animation: jooo-right 0.3s alternate infinite;
 }
 
 .left-hand-red {
     position: absolute;
-    left: 1276px;
+    right: 26.2%;
+    translate: -50px;
     width: 130px;
     height: 130px;
     top: 100px;
-    animation: jooo-left 0.3s alternate infinite;
 }
 
 .right-hand-red {
     position: absolute;
-    left: 1350px;
+    right: 26.2%;
+    translate: 24px;
     width: 130px;
     height: 130px;
     top: 100px;
-    animation: jooo-right 0.3s alternate infinite;
 }
 
 @keyframes jooo-left {
@@ -271,12 +271,30 @@ body {
     }
 }
 
+@keyframes jooo-left-constant {
+    0% {
+        rotate: 100deg;
+    }
+    100% {
+        rotate: 90deg;
+    }
+}
+
 @keyframes jooo-right {
     0% {
         rotate: 0deg;
     }
     100% {
         rotate: -100deg;
+    }
+}
+
+@keyframes jooo-right-constant {
+    0% {
+        rotate: -100deg;
+    }
+    100% {
+        rotate: -90deg;
     }
 }
 
@@ -293,7 +311,7 @@ body {
     position: absolute;
     left: 15%;
     height: 200px;
-    width: 600px;
+    width: 30.75%;
     top: 150px;
     z-index: -1;
 }
@@ -302,7 +320,7 @@ body {
     position: absolute;
     right: 15%;
     height: 200px;
-    width: 600px;
+    width: 30.75%;
     top: 150px;
     z-index: -1;
 }
