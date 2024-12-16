@@ -566,32 +566,44 @@ function activateFans(side, state) {
                 if (state) {
                     blueFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 alternate ease-in-out`
 
-                    blueFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         blueFan.style.animation = `${fanLeftHandConstantAnimationName} ${fanLeftHandConstantAnimationLength}s infinite alternate ease-in-out`
-                    })
+                        blueFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    blueFan.addEventListener("animationend", eventAction)
                 }
                 else {
                     blueFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 ease-in-out reverse`
-
-                    blueFan.addEventListener("animationend", () => {
+                    
+                    const eventAction = () => {
                         blueFan.style.animation = "none"
-                    })
+                        blueFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    blueFan.addEventListener("animationend", eventAction)
                 }
             }
             else if (classList.contains("right-hand-blue")) {
                 if (state) {
                     blueFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 alternate ease-in-out`
 
-                    blueFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         blueFan.style.animation = `${fanRightHandConstantAnimationName} ${fanRightHandConstantAnimationLength}s infinite alternate ease-in-out`
-                    })
+                        blueFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    blueFan.addEventListener("animationend", eventAction)
                 }
                 else {
                     blueFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 ease-in-out reverse`
 
-                    blueFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         blueFan.style.animation = "none"
-                    })
+                        blueFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    blueFan.addEventListener("animationend", eventAction)
                 }
             } 
         })
@@ -612,32 +624,44 @@ function activateFans(side, state) {
                 if (state) {
                     redFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 alternate ease-in-out`
 
-                    redFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         redFan.style.animation = `${fanLeftHandConstantAnimationName} ${fanLeftHandConstantAnimationLength}s infinite alternate ease-in-out`
-                    })
+                        redFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    redFan.addEventListener("animationend", eventAction)
                 }
                 else {
                     redFan.style.animation = `${fanLeftHandAnimationName} ${fanLeftHandAnimationLength}s 1 ease-in-out reverse`
 
-                    redFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         redFan.style.animation = "none"
-                    })
+                        redFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    redFan.addEventListener("animationend", eventAction)
                 }
             }
             else if (classList.contains("right-hand-red")) {
                 if (state) {
                     redFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 alternate ease-in-out`
 
-                    redFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         redFan.style.animation = `${fanRightHandConstantAnimationName} ${fanRightHandConstantAnimationLength}s infinite alternate ease-in-out`
-                    })
+                        redFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    redFan.addEventListener("animationend", eventAction)
                 }
                 else {
                     redFan.style.animation = `${fanRightHandAnimationName} ${fanRightHandAnimationLength}s 1 ease-in-out reverse`
 
-                    redFan.addEventListener("animationend", () => {
+                    const eventAction = () => {
                         redFan.style.animation = "none"
-                    })
+                        redFan.removeEventListener("animationend", eventAction)
+                    }
+
+                    redFan.addEventListener("animationend", eventAction)
                 }
             } 
         })
