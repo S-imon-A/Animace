@@ -424,23 +424,25 @@ function endRound(winnerName) {
 
     winner.style.display = "block"
 
+    if (winnerName === "Left player") {
+        activateFans("left", true)
+    }
+    else if (winnerName === "Right player") {
+        activateFans("right", true)
+    }
+
     if (leftPlayerPoints === 11 && rightPlayerPoints < 10 || rightPlayerPoints === 11 && leftPlayerPoints <= 10 || Math.abs(leftPlayerPoints - rightPlayerPoints) > 1 && rightPlayerPoints >= 10 && leftPlayerPoints >= 10) {
         winner.innerText = winnerName + " is the winner!"
         displayPoints()
         rightPoints.style.animation = "none"
         leftPoints.style.animation = "none"
 
+
+
         return
     }
     else {
         winner.innerText = winnerName
-    }
-
-    if (winnerName === "Left player") {
-        activateFans("left", true)
-    }
-    else if (winnerName === "Right player") {
-        activateFans("right", true)
     }
 
     displayPoints()
