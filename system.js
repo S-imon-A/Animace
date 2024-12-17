@@ -83,6 +83,7 @@ const rightPoints = document.querySelector("#right-points")
 const serveInfo = document.querySelector("#serve-info")
 const matchPointInfo = document.querySelector("#match-point")
 const countdown = document.querySelector("#countdown")
+const logo = document.querySelector("#logo")
 let countdownBlur = NaN
 let startDefaultText = startButton.innerText
 
@@ -397,6 +398,8 @@ function countdownAnimationEnd() {
             countdownBlur.remove()
             countdown.removeEventListener("click", countdownAnimationEnd)
     
+            logo.style.width = "8%"
+
             enableBall()
 
             break
@@ -437,8 +440,6 @@ function endRound(winnerName) {
         rightPoints.style.animation = "none"
         leftPoints.style.animation = "none"
 
-
-
         return
     }
     else {
@@ -459,6 +460,8 @@ function endRound(winnerName) {
             matchPointInfo.innerText = matchPoint[1] + " matchpoint!"
             matchPointInfo.style.display = "block"
         }
+
+        logo.style.width = "15%"
 
         serveInfo.style.display = "block"
 
