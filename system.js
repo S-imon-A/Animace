@@ -117,6 +117,8 @@ let blueFans = []
 let redFans = []
 let lastFanSide = "none"
 
+let isRound = false
+
 function getDistance(element0, element1) {
     const rect0 = element0.getBoundingClientRect()
     const rect1 = element1.getBoundingClientRect()
@@ -407,6 +409,8 @@ function countdownAnimationEnd() {
 }
 
 function startRound() {
+    isRound = true
+
     countdown.style.display = "block"
     countdown.style.animation = `countdown-animation ${cooldownNumberTime/2}s alternate 2`
 
@@ -468,6 +472,8 @@ function endRound(winnerName) {
         startButton.innerText = "Next serve"
         startButton.style.display = "block"
         startButtonBackground.style.display = "block"
+
+        isRound = false
     }, 2000)
 }
 
@@ -750,6 +756,23 @@ function createFans() {
     duplicateFans(redFan, "right")
 }
 
+function startClick() {
+    startButton.style.display = "none"
+    startButtonBackground.style.display = "none"
+
+    serveInfo.style.display = "block"
+
+    if (startButton.innerText === startDefaultText) {
+        setNextServePlayer()
+    }
+
+    if (lastFanSide !== "none") {
+         activateFans(lastFanSide, false)
+    }
+
+    startRound()
+}
+
 function setup() {
     ball.style.visibility = "hidden"
 
@@ -763,26 +786,19 @@ function setup() {
     }
 
     startButton.addEventListener("click", () => {
-        startButton.style.display = "none"
-        startButtonBackground.style.display = "none"
-
-        serveInfo.style.display = "block"
-
-        if (startButton.innerText === startDefaultText) {
-            setNextServePlayer()
-        }
-
-        if (lastFanSide !== "none") {
-            activateFans(lastFanSide, false)
-        }
-
-        startRound()
+        startClick()
     })
 
     createFans()
 
     document.addEventListener("keydown", onKeyDown)
     document.addEventListener("keyup", onKeyUp)
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !isRound) {
+            startClick()
+        }  
+    })
     
     window.requestAnimationFrame(mainLoop)
 }
