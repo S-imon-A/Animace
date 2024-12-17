@@ -4,7 +4,7 @@
 }
 
 :root {
-    --font: Fugaz One;
+    --font: Russo One;
 }
 
 body {
@@ -336,7 +336,6 @@ body {
     z-index: 50;
     left: 50%;
     transform: translate(-50%);
-    /*width: 8%;*/
     width: 20%;
     transition: all 0.1s;
 }
